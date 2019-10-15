@@ -6,7 +6,6 @@ const goodsController = require('./../controllers/goods');
 const userController = require('./../controllers/user');
 const orderController = require('./../controllers/order');
 const smsController = require('./../controllers/sms');
-const buildController = require('./../controllers/build');
 const kdniaoController = require('./../controllers/kdniao');
 const managerController = require('./../controllers/manager');
 const authController = require('./../controllers/auth');
@@ -30,7 +29,6 @@ router.get('/order/:id', orderController.show);
 router.put('/order/:id/express', orderController.updateExpress);
 
 // 微信
-router.get('/wx/build-ticket', buildController.build);
 router.get('/wx/goods/:id', goodsController.show);
 router.post('/wx/wxlogin', userController.wxlogin);
 router.post('/wx/order/check', orderController.check);
