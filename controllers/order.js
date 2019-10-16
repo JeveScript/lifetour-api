@@ -2,6 +2,8 @@ const orderModel = require('./../models/order');
 const { formatTime, formatDate } = require('./../utils/formatDate.js');
 const smsModel = require('./../models/sms');
 const aliyunModel = require('./../models/aliyun');
+const ticketModel = require('./../models/ticket');
+const goodsModel = require('./../models/goods');
 
 const orderController = {
   list: async function(req, res, next) {
@@ -84,6 +86,9 @@ const orderController = {
       if(!orderInfo) {
         res.json({ code: 0, message: '无该订单' })
       }else{
+        let goodsId = orderInfo.goods_id;
+        let goodsInfo = await goodsModel.show({ id: goodsId });
+        orderInfo.goods = goodsInfo[0];
         orderInfo.created_at = formatTime(orderInfo.created_at);
         res.json({ code: 200, data: orderInfo });
       }
@@ -105,11 +110,10 @@ const orderController = {
     let express_code = req.body.express_code;
     let express_number = req.body.express_number;
     let express_company = req.body.express_company;
-    let address_phone = req.body.address_phone;
+    let user_phone = req.body.user_phone;
     let findex = req.body.findex;
 
-
-    if(!express_code || !express_number || !express_company || !findex || !address_phone) {
+    if(!express_code || !express_number || !express_company || !findex || !user_phone) {
       res.json({code: 0, message: '缺少必要参数'})
       return
     }
@@ -130,7 +134,7 @@ const orderController = {
 
       const smsLogInsert = await smsModel.insert({
         code: express_code,
-        phone: address_phone,
+        phone: user_phone,
         params: TemplateParam,
         template: 'SMS_175570407',
         sign_name: '卡券速兑',
@@ -139,7 +143,7 @@ const orderController = {
       const smsLogId = smsLogInsert[0];
       const smsResult =  await aliyunModel
         .sms({
-          PhoneNumbers: address_phone,
+          PhoneNumbers: user_phone,
           SignName: '卡券速兑',
           TemplateCode: 'SMS_175570407',
           TemplateParam

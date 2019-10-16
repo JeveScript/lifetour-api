@@ -47,10 +47,10 @@ const ticketController = {
       }
 
       await smsModel.update(smsLog.id, { status: 1 });
-      console.log(findex,fcode)
+
       let ticketShow = await ticketModel.show({ findex, fcode });
       let ticketInfo = ticketShow[0];
-      console.log(ticketInfo)
+
       if(!ticketInfo) {
         res.json({ code: 0, message: '券码错误，请重新获取验证码'});
         return
@@ -68,14 +68,17 @@ const ticketController = {
       }
 
       let ticket_id = ticketInfo.id;
+      let goods_id = ticketInfo.goods_id;
       await ticketModel.update(ticket_id, { user_id, status: 1 });
       let orderInsert = await orderModel.insert({
         findex,
         user_id,
+        goods_id,
         ticket_id,
         address_name,
         address_phone,
         address_detail,
+        user_phone: phone,
       })
 
       res.json({ code: 200, data: {
