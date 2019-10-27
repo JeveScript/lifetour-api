@@ -17,6 +17,7 @@ const orderController = {
     let currentPage = req.query.current_page || 1;
     let startAt = req.query.start_at;
     let endAt = req.query.end_at;
+    let company_id = req.query.company_id;
     let filterColumn = (startAt && endAt) ? 'order.created_at' : '';
     let params = {};
     if(status !== '') params.status = status;
@@ -25,7 +26,8 @@ const orderController = {
     if(address_phone) params.address_phone = address_phone;
     if(express_number) params.express_number = express_number;
     if(express_status !== '') params.express_status = express_status;
-
+    if(company_id) params.company_id = company_id;
+    
     try {
       let orders = await orderModel
         .pagination(pageSize, currentPage, params, {

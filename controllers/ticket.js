@@ -69,12 +69,14 @@ const ticketController = {
 
       let ticket_id = ticketInfo.id;
       let goods_id = ticketInfo.goods_id;
+      let company_id = ticketInfo.company_id;
       await ticketModel.update(ticket_id, { user_id, status: 1 });
       let orderInsert = await orderModel.insert({
         findex,
         user_id,
         goods_id,
         ticket_id,
+        company_id,
         address_name,
         address_phone,
         address_detail,

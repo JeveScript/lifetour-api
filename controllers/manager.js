@@ -5,20 +5,25 @@ const managerController = {
     let name = req.body.name;
     let password = req.body.password;
     let phone = req.body.phone;
-    if(!name || !password || !phone) {
+    let role = req.body.role;
+    let company_id = req.body.company_id;
+
+    if(!name || !password || !phone || !role) {
       res.json({code:0,message: '参数缺少'});
       return
     }
 
     try {
-      let judge = await managerModel.where({phone});
-      if(judge.length >= 1){
-          return res.json({code:0,message:'用户已存在'})
+      let manages = await managerModel.where({phone});
+      if(manages.length){
+        res.json({code:0,message:'用户已存在'})
+        return
       }
-      await managerModel.insert({ name, password, phone});
-      res.json({code:200,message: '添加成功'});
+
+      await managerModel.insert({ name, password, phone, role, company_id });
+      res.json({code:200, message: '添加成功'});
     } catch (err) {
-      res.json({code:0,message: '服务器错误'});
+      res.json({code:0, message: '服务器错误'});
     }
   },
   show: async function(req,res,next) {

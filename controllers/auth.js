@@ -13,13 +13,18 @@ const authController = {
     if(!manage) {
       res.json({ code: 0 , message: '账号密码错误'})
       return
+    } else if (manage.is_deleted){
+      res.json({ code: 0 , message: '账号以过期，请联系管理员重新开通'})
+      return
     } else {
       let user_id = manage.id;
-      let user_name = manage.name;
-      let str = phone + '\t' + password + '\t' + user_id;
+      let name = manage.name;
+      let company_id = manage.company_id;
+      let role = manage.role;
+      let str = phone + '\t' + password + '\t' + user_id + '\t' + company_id;
       let token = authCode(str, 'ENCODE');
       res.json({ code: 200 , message: '登录成功', data: {
-        userInfo: { phone, user_id ,user_name},
+        userInfo: { phone, user_id , name, company_id, role },
         token: token,
       }})
     }

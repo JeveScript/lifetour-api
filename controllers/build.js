@@ -16,8 +16,8 @@ async function getTicketImage() {
     const wexinToken = wexinTokenResData.access_token;
     const WXACODE_URL = `https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=${wexinToken}`;
 
-    const beginIndex = 1001;
-    const endIndex = 1020;
+    const beginIndex = 1;
+    const endIndex = 20;
     // const PREFIX = 'R';
     const PREFIX = 'D';
     const companyId = '01';
@@ -32,11 +32,12 @@ async function getTicketImage() {
       const YEAR = 2019;
       const MONTH = '10';
       const DAY = '01';
+      const SIMPLEYEAR = String(YEAR).substring(2);
       const index = String(i).padStart(5,0);
       const encode = PREFIX + companyId + goodsId + index;
       tmp.company_id = companyId;
       tmp.goods_id = goodsId;
-      tmp.findex = `${PREFIX}${companyId}${goodsId}${YEAR}${MONTH}${DAY}${index}`;
+      tmp.findex = `${PREFIX}${companyId}${goodsId}${SIMPLEYEAR}${MONTH}${DAY}${index}`;
       tmp.start_at = `${YEAR}-${MONTH}-${DAY}`;
       tmp.end_at = `${YEAR + 2}-${MONTH}-${DAY}`;
       let src = '';
@@ -47,21 +48,21 @@ async function getTicketImage() {
       result.push(tmp);
     }
 
-    // result.forEach(async function(data,index) {
-    //   const getUnlimitedRes = await axios.post(WXACODE_URL,{
-    //     scene: data.findex,
-    //     page: 'pages/exchange/exchange',
-    //   },{
-    //     headers: {
-    //       'content-type': 'application/json'
-    //     },
-    //     responseType:'stream', //arraybuffer
-    //   })
-    //   const getUnlimitedResData = getUnlimitedRes.data;
-    //   getUnlimitedResData.pipe(fs.createWriteStream('./dist/' + data.findex + '.jpeg'));
-    // })
+    result.forEach(async function(data,index) {
+      const getUnlimitedRes = await axios.post(WXACODE_URL,{
+        scene: data.findex + data.fcode,
+        page: 'pages/dexchange/dexchange',
+      },{
+        headers: {
+          'content-type': 'application/json'
+        },
+        responseType:'stream', //arraybuffer
+      })
+      const getUnlimitedResData = getUnlimitedRes.data;
+      getUnlimitedResData.pipe(fs.createWriteStream('./dist/' + data.findex + '.jpeg'));
+    })
 
-    await ticketModel.insert(result)
+    // await ticketModel.insert(result)
     console.log('success')
   }catch(e) {
     console.log(e)
