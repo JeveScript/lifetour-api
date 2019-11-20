@@ -14,7 +14,7 @@ const qiniuController = {
       let putPolicy = new qiniu.rs.PutPolicy(options);
       let uploadToken=putPolicy.uploadToken(mac);
       res.json({code:200, data:{uploadToken,domain}, message:'请求成功'})
-    }catch{
+    }catch(e){
       res.json({code:0, message:"服务器错误"})
     }
   }
